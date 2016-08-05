@@ -1,0 +1,89 @@
+.audio-player {
+  &__icon {
+    cursor: pointer;
+    font-size: 4rem;
+    &:hover {
+      color: $brand-red;
+    }
+  }
+
+  .player-track.active {
+    border-color: #A2A2A2;
+    background: #fff;
+    z-index: 10;
+  }
+  .player-track {
+    border: 1px solid #eee;
+    transition: color 125ms ease-in-out;
+    background: #fff;
+    color: #1A1A1A;
+    position: relative;
+    padding: 1.7rem;
+    z-index: 5;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+
+    .control {
+      transition: fill 125ms ease-in-out;
+      margin-right: 1.8rem;
+      cursor: pointer;
+    }
+    .player-display {
+      flex: 1 1 100%;
+      margin-bottom: 0;
+
+      .soundcloud {
+        font-size: 1.2rem;
+      }
+
+      .progress-bar {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        margin: 0;
+        .position: {
+          text-align: right;
+          margin-right: 1rem;
+          margin-left: 0;
+          font-feature-settings: tnum;
+        }
+        .numeric {
+          font-size: 1.1rem;
+          letter-spacing: 0.1rem;
+          line-height: 1rem;
+          color: #5E5E5E;
+          flex: 0 1 auto;
+          vertical-align: middle;
+        }
+        .bar {
+          flex: 1 1 auto;
+          width: 100%;
+          display: block;
+          padding: .6rem 0;
+          .container-bar {
+            display: block;
+            position: relative;
+            width: 100%;
+            height: .4rem;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+            transform: translateZ(0);
+          }
+          .bar-progress {
+            transition: transform .2s;
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: $brand-red;
+            display: block;
+          }
+        }
+      }
+    }
+  }
+
+
+}
