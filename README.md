@@ -1,5 +1,7 @@
 # react-soundcloud-player
 
+[![npm version](https://badge.fury.io/js/react-soundcloud-player.svg)](https://badge.fury.io/js/react-soundcloud-player)
+
 react-soundcloud-player is a simple SoundCloud player.
 
 ## Installation
