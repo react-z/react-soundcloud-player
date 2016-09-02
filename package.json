@@ -1,6 +1,6 @@
 {
   "name": "react-soundcloud-player",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple SoundCloud plyaer.",
   "main": "lib/Player.js",
   "repository": {
