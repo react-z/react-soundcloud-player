@@ -2,6 +2,10 @@ import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { config } from './config'
 import FormatTime from './FormatTime'
+import Play from './Play'
+import Pause from './Pause'
+import Replay from './Replay'
+import Forward from './Forward'
 
 /**
  * SoundCloud Player
@@ -24,6 +28,7 @@ export default class Player extends Component {
       playing: false,
       audioPlayer: null,
       percent_remains: 100,
+      percent_progress_remains: 100,
       duration: '0:00',
       current_time: '0:00',
       client_id: config.client_id
@@ -33,13 +38,20 @@ export default class Player extends Component {
   componentDidMount() {
     this.setState({ audioPlayer: ReactDOM.findDOMNode(this.refs.audio) }, () => {
       this.state.audioPlayer.ontimeupdate = () => { this.timeUpdated() };
+      this.state.audioPlayer.onprogress = () => { this.progressUpdated() };
     })
   }
 
   togglePlay () {
     const { playing, audioPlayer } = this.state;
-    this.setState({ playing: !playing }, () => {
-      this.state.playing ? audioPlayer.play() : audioPlayer.pause()
+    this.setState({ playing: !playing, showAudioPlayer: true }, () => {
+      if (audioPlayer.paused) {
+        audioPlayer.play()
+      }
+      if (!this.state.playing) {
+        if (!audioPlayer.buffered.length) return;
+        audioPlayer.pause()
+      }
     })
   }
 
@@ -47,39 +59,118 @@ export default class Player extends Component {
     const { playing, audioPlayer } = this.state;
     if(audioPlayer == undefined){ return }
     let percent = (audioPlayer.currentTime / audioPlayer.duration) * 100
-    this.setState({ current_time: FormatTime(audioPlayer.currentTime * 10) })
-    this.setState({ duration: FormatTime(audioPlayer.duration * 10) })
+    this.setState({ current_time: FormatTime(audioPlayer.currentTime) })
+    this.setState({ duration: FormatTime(audioPlayer.duration) })
     this.setState({ percent_remains: 100 - percent})
+  }
+
+  progressUpdated() {
+    const { playing, audioPlayer } = this.state;
+    if (audioPlayer == undefined) return;
+    if (!audioPlayer.buffered.length) return;
+    var bufferedEnd = audioPlayer.buffered.end(audioPlayer.buffered.length - 1);
+    if (audioPlayer.duration > 0) {
+      let percent_remains = (bufferedEnd / audioPlayer.duration) * 100
+      this.setState({ percent_progress_remains: 100 - percent_remains})
+    }
+  }
+
+  positionChange (e) {
+    const { audioPlayer } = this.state
+    let elem = ReactDOM.findDOMNode(this.refs.progress)
+    let elemRect = elem.getClientRects()
+    let elemLeft = elemRect[0].left
+    let elemWidth = elemRect[0].width
+    let clickPositionLeft = e.pageX
+    let percent_remains =  100 - ( (clickPositionLeft - elemLeft) / elemWidth * 100 )
+    let newTime = audioPlayer.duration - ( audioPlayer.duration * (percent_remains / 100) )
+    audioPlayer.currentTime = Math.floor(newTime)
+    setTimeout( () => {
+      if(audioPlayer.paused) { this.togglePlay() }
+    }, 1000)
+  }
+
+  forward() {
+    const { audioPlayer } = this.state
+    let newTime = audioPlayer.currentTime + 30
+    if(newTime < audioPlayer.duration) {
+      audioPlayer.currentTime = Math.floor(newTime)
+    }
+  }
+
+  replay() {
+    const { audioPlayer } = this.state
+    let newTime = audioPlayer.currentTime - 30
+    if(newTime > 0) {
+      audioPlayer.currentTime = Math.floor(newTime)
+    }
+  }
+
+  renderPlayerIcons() {
+    const { playing } = this.state
+
+    let skipButtons = (
+      <span className='player__control__icons--skip'>
+        <div className='player__control__icon' onClick={this.forward.bind(this)}>
+          <Forward  />
+        </div>
+        <div className='player__control__icon' onClick={this.replay.bind(this)}>
+          <Replay onClick={this.replay.bind(this)} />
+        </div>
+      </span>
+    )
+
+    if (playing) {
+      return (
+        <div className='player__control__icons--pause'>
+          <div className='player__control__icon' onClick={this.togglePlay.bind(this)}>
+            <Pause  />
+          </div>
+          {skipButtons}
+        </div>
+      );
+    }
+
+    return (
+      <div className='player__control__icons--play'>
+        <div className='player__control__icon' onClick={this.togglePlay.bind(this)}>
+          <Play />
+        </div>
+        {skipButtons}
+      </div>
+    )
   }
 
   render () {
     const { audio_id, audio_secret_token, title, link } = this.props
-    const { playing, audioPlayer, percent_remains, duration, current_time, client_id } = this.state
+    const { playing, audioPlayer, percent_remains, percent_progress_remains, duration, current_time, client_id } = this.state
     let streamUrl = `https://api.soundcloud.com/tracks/${audio_id}/stream?client_id=${client_id}&secret_token=${audio_secret_token}`
     let iconClass = playing ? 'player__control__icon--pause' : 'player__control__icon--play'
     iconClass += ' player__control__icon'
-    let percent = { transform: `translateX(-${percent_remains.toString()}%)` }
+    let time_remains = { transform: `translateX(-${percent_remains.toString()}%)` }
+    let progress_remains = { transform: `translateX(-${percent_progress_remains.toString()}%)` }
 
     return (
     	<div className='player player__track--active'>
 
-        <audio id='audio' ref='audio' src={streamUrl}></audio>
+        <audio id='audio' preload='none' ref='audio' src={streamUrl}></audio>
 
-        <div className="player__control" onClick={this.togglePlay.bind(this)}>
-          <svg className={iconClass} x="0px" y="0px" viewBox="0 0 40 40" data-reactid=".23fudc7q4g0.1.5:0.1.0.$18471/=1$18471.0.1.0.0.2.0.0.1.0.0"><path class="button-circle" d="M20,1c10.5,0,19,8.5,19,19s-8.5,19-19,19S1,30.5,1,20S9.5,1,20,1 M20,0C9,0,0,9,0,20s9,20,20,20s20-9,20-20S31,0,20,0L20,0z" data-reactid=".23fudc7q4g0.1.5:0.1.0.$18471/=1$18471.0.1.0.0.2.0.0.1.0.0.0"></path><g class="play-icon icon" data-reactid=".23fudc7q4g0.1.5:0.1.0.$18471/=1$18471.0.1.0.0.2.0.0.1.0.0.1"><path d="M16.9,12.4c-0.2-0.1-0.5-0.2-0.8,0c-0.2,0.1-0.4,0.4-0.4,0.7v14c0,0.3,0.1,0.5,0.4,0.7c0.1,0.1,0.2,0.1,0.4,0.1c0.1,0,0.3,0,0.4-0.1l11-7c0.2-0.1,0.3-0.4,0.3-0.6s-0.1-0.5-0.3-0.6L16.9,12.4z" data-reactid=".23fudc7q4g0.1.5:0.1.0.$18471/=1$18471.0.1.0.0.2.0.0.1.0.0.1.0"></path></g></svg>
+        <div className='player__control'>
+          { this.renderPlayerIcons() }
         </div>
-        <div className="player__display">
+
+        <div className="player__display" onClick={this.positionChange.bind(this)}>
           <div>
             <h4>{title}</h4>
-            <span className="player__soundcloud">
-              <span>Via&nbsp;</span>
-              <a href="" rel="nofollow" target="_blank">SoundCloud</a></span>
           </div>
           <div className="player__progress">
             <span className="player__progress__time">{current_time}</span>
             <span className="player__progress__bar">
-              <span className="player__progress__bar--container">
-                <span className="player__progress__bar--percent" style={percent}></span>
+              <span ref='progress' className="player__progress__bar--container">
+
+                <span className="player__progress__bar--percent player__progress__bar--progress"
+                      style={progress_remains}></span>
+                <span className="player__progress__bar--percent" style={time_remains}></span>
               </span>
             </span>
             <span className="player__progress__time">{duration}</span>
