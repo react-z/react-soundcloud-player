@@ -33,14 +33,20 @@ ReactDOM.render( <TestComponent />, document.getElementById('root') )
 
 ## Styles
 
-react-soundcloud-player can be used with your own custom styles. A minimal [Player.css](https://github.com/StevenIseki/react-soundcloud-player/blob/master/example/public/Player.css) style sheet is included as a guide.
+Uses styled-components 💅 for the base styling.
 
 ## Development
+    yarn
+    npm run dev
 
-    npm install
+## Build
+    yarn
     npm run build
-    npm test
-    npm start
+    npm login
+    npm version patch
+    git add -A
+    git push origin master
+    npm publish
 
 ## License
 

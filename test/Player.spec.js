@@ -1,8 +1,7 @@
 import expect from 'expect'
 import test from 'tape'
 import React from 'react'
-import { shallow, mount } from 'enzyme'
-import { setupJsdom } from './jsdom'
+import { mount } from 'enzyme'
 import Player from '../src/Player'
 
 test('Player component', (t) => {
