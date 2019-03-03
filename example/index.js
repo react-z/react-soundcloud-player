@@ -1,4 +1,4 @@
-import Player from '../src/Player' // 'react-soundcloud-player'
+import Player from '../lib/Player' // 'react-soundcloud-player'
 import ReactDOM from 'react-dom'
 import React, { Component } from 'react'
 

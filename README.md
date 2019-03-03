@@ -2,33 +2,36 @@
 
 [![npm version](https://badge.fury.io/js/react-soundcloud-player.svg)](https://badge.fury.io/js/react-soundcloud-player)
 
-![](https://raw.githubusercontent.com/StevenIseki/react-soundcloud-player/master/example/screenshot.png)
+![](https://raw.githubusercontent.com/StevenIseki/react-soundcloud-player/master/example/screenshot.gif)
 
 react-soundcloud-player is a simple SoundCloud player.
 
 ## Installation
 
-`npm install react-soundcloud-player --save`
+`yarn add react-soundcloud-player`
 
 ## Usage
 
 ```javascript
 import Player from 'react-soundcloud-player'
 import ReactDOM from 'react-dom'
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 
 class TestComponent extends Component {
-
-  render () {
+  render() {
     return (
       <div>
-        <Player audio_id='193179003' title='Easyfun - Fanta' />
+        <Player
+          client_id="c5a171200f3a0a73a523bba14a1e0a29"
+          audio_id="193179003"
+          title="Easyfun - Fanta"
+        />
       </div>
     )
   }
 }
 
-ReactDOM.render( <TestComponent />, document.getElementById('root') )
+ReactDOM.render(<TestComponent />, document.getElementById('root'))
 ```
 
 ## Styles
